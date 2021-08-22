@@ -1,10 +1,10 @@
 
-
 import 'package:chat_app_firebase/Auth/providers/auth_provider.dart';
 import 'package:chat_app_firebase/Auth/ui/login_page.dart';
 import 'package:chat_app_firebase/Auth/ui/register_page.dart';
 import 'package:chat_app_firebase/Auth/ui/reset_password_page.dart';
 import 'package:chat_app_firebase/services/rout_helper.dart';
+import 'package:chat_app_firebase/ui/chat_page.dart';
 import 'package:chat_app_firebase/ui/home_page.dart';
 import 'package:chat_app_firebase/ui/welcome_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,9 +24,10 @@ void main() {
           LoginPage.routeName: (context) => LoginPage(),
           HomePage.routeName: (context) => HomePage(),
           ResetPasswordPage.routeName: (context) => ResetPasswordPage(),
+          ChatPage.routeName:(context)=>ChatPage(),
         },
         navigatorKey: RoutHelper.routHelper.navKey,
-        home:RegisterPage (),
+        home:FirebaseConfiguration(),
       )));
 }
 
@@ -48,7 +49,12 @@ class FirebaseConfiguration extends StatelessWidget {
             );
           }
           if (data.connectionState == ConnectionState.done) {
-            return RegisterPage();
+            if (Provider.of<AuthProvider>(context,listen: false).getCurrentUser() != null) {
+              return HomePage();
+            }
+            else {
+              return RegisterPage();
+            }
           }
           return Scaffold(
             body: Center(

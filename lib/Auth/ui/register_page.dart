@@ -40,7 +40,7 @@ class RegisterPage extends StatelessWidget {
                       width: 150,
                       height: 200,
                       child: Image.asset(
-                        'assets/images/oo.png',
+                        'assets/images/logoo.jpg',
                       ),
                     ),
                     const SizedBox(
@@ -93,10 +93,23 @@ class RegisterPage extends StatelessWidget {
                           child: Column(
                             children: [
                               CustomTextField(
+                                  provider.fNameController,
+                                  'First Name',Icons.person),
+                              CustomTextField(
+                                  provider.lNameController,
+                                  'Last Name',Icons.person_rounded),
+                              CustomTextField(
                                   provider.emailEditingController, 'Email',Icons.email),
                               CustomTextField(
                                   provider.passwordEditingController,
-                                  'Password',Icons.lock)
+                                  'Password',Icons.lock),
+                              CustomTextField(
+                                  provider.countryController,
+                                  'Country',Icons.home_outlined),
+                              CustomTextField(
+                                  provider.cityController,
+                                  'City',Icons.location_city),
+
                             ],
                           ),
                         ),

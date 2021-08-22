@@ -1,6 +1,8 @@
 import 'package:chat_app_firebase/services/custom_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'firestore_helper.dart';
+
 class AuthHelper {
   AuthHelper._();
 
@@ -23,10 +25,14 @@ class AuthHelper {
     }
   }
 
-  signIn(String email, String password) async {
+  Future<UserCredential>signIn(String email, String password) async {
     try {
       UserCredential userCredential = await firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
+      FirestoreHelper.firestoreHelper
+          .getUserFromFirestore(userCredential.user.uid);
+
+      return userCredential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         CustomDialog.customDialog
@@ -36,6 +42,10 @@ class AuthHelper {
             .showCustomDialog('Wrong password provided for that user.');
       }
     }
+  }
+  getCurrentUser() {
+    User user = firebaseAuth.currentUser;
+    return user;
   }
 
   resetPassword(String email) async {
