@@ -1,3 +1,4 @@
+import 'package:chat_app_firebase/Auth/models/country_model.dart';
 import 'package:chat_app_firebase/Auth/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -24,6 +25,16 @@ class FirestoreHelper {
     DocumentSnapshot documentSnapshot =
     await  firebaseFirestore.collection('Users').doc(userId).get();
     print(documentSnapshot.data);
+  }
+  Future <List<CountryModel>>getCountriesFirestore() async {
+   QuerySnapshot<Map<String,dynamic>>querySnapshot =await firebaseFirestore.collection('countries').get();
+   List<CountryModel> countries=querySnapshot.docs.map((e) {
+     Map map=e.data();
+     map  ['id']=e.id;
+
+      return CountryModel.fromMap(map);
+    }).toList();
+   return countries;
   }
   Future<List<UserModel>> getAllUsersFromFirestore() async {
     QuerySnapshot querySnapshot =

@@ -1,5 +1,6 @@
 import 'package:chat_app_firebase/Auth/helpers/auth_helper.dart';
 import 'package:chat_app_firebase/Auth/helpers/firestore_helper.dart';
+import 'package:chat_app_firebase/Auth/models/country_model.dart';
 import 'package:chat_app_firebase/Auth/models/user_model.dart';
 import 'package:chat_app_firebase/Auth/ui/login_page.dart';
 import 'package:chat_app_firebase/services/custom_dialog.dart';
@@ -18,11 +19,30 @@ class AuthProvider extends ChangeNotifier {
   TextEditingController cityController = TextEditingController();
   TextEditingController countryController = TextEditingController();
   List<UserModel> allUsers;
+  AuthProvider(){
+    getCountryiesFromFireStore();
+  }
+
+
 
 
   resetControllers() {
     emailEditingController.clear();
     passwordEditingController.clear();
+  }
+  List<String>cites=[];
+  CountryModel selectedCountry;
+  String selectedCity;
+  selectCountry(CountryModel countryModel){
+    this.selectedCountry=countryModel;
+    this.cites=countryModel.cities;
+    notifyListeners();
+  }
+  List<CountryModel>countryies;
+  getCountryiesFromFireStore()async{
+    List<CountryModel> countryies= await FirestoreHelper.firestoreHelper.getCountriesFirestore();
+    this.countryies=countryies;
+    notifyListeners();
   }
 
   register() async {

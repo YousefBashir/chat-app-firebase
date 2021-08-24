@@ -1,3 +1,4 @@
+import 'package:chat_app_firebase/Auth/models/country_model.dart';
 import 'package:chat_app_firebase/Auth/providers/auth_provider.dart';
 import 'package:chat_app_firebase/Auth/ui/login_page.dart';
 import 'package:chat_app_firebase/global_widgets/custom_button.dart';
@@ -109,6 +110,30 @@ class RegisterPage extends StatelessWidget {
                               CustomTextField(
                                   provider.cityController,
                                   'City',Icons.location_city),
+                              Container(child: DropdownButton<CountryModel>(
+                                value: provider.selectedCountry,
+                                onChanged: (x){
+                                 provider.selectCountry(x);
+                                },
+                                items: provider.countryies.map((e){
+
+                                  return DropdownMenuItem<CountryModel>(
+                                      child: Text(e.name),
+                                   );
+                                }).toList(),
+                              ),),
+                              Container(child: DropdownButton<dynamic>(
+                                value: provider.selectedCity,
+                                onChanged: (x){
+                                  provider.selectCountry(x);
+                                },
+                                items: provider.countryies.map((e){
+
+                                  return DropdownMenuItem<CountryModel>(
+                                    child: Text(e.name),
+                                    );
+                                }).toList(),
+                              ),)
 
                             ],
                           ),

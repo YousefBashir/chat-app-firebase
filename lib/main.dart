@@ -27,7 +27,7 @@ void main() {
           ChatPage.routeName:(context)=>ChatPage(),
         },
         navigatorKey: RoutHelper.routHelper.navKey,
-        home:FirebaseConfiguration(),
+        home:ChatPage(),
       )));
 }
 
