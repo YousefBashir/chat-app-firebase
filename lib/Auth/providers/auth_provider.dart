@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:chat_app_firebase/Auth/helpers/auth_helper.dart';
+import 'package:chat_app_firebase/Auth/helpers/firebase_storage_helper.dart';
 import 'package:chat_app_firebase/Auth/helpers/firestore_helper.dart';
 import 'package:chat_app_firebase/Auth/models/country_model.dart';
 import 'package:chat_app_firebase/Auth/models/user_model.dart';
@@ -8,6 +11,7 @@ import 'package:chat_app_firebase/services/rout_helper.dart';
 import 'package:chat_app_firebase/ui/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../models/register_request.dart';
 
@@ -16,58 +20,82 @@ class AuthProvider extends ChangeNotifier {
   TextEditingController passwordEditingController = TextEditingController();
   TextEditingController fNameController = TextEditingController();
   TextEditingController lNameController = TextEditingController();
-  TextEditingController cityController = TextEditingController();
-  TextEditingController countryController = TextEditingController();
   List<UserModel> allUsers;
-  AuthProvider(){
-    getCountryiesFromFireStore();
+
+  AuthProvider() {
+    getCountriesFromFireStore();
   }
-
-
-
 
   resetControllers() {
     emailEditingController.clear();
     passwordEditingController.clear();
+    fNameController.clear();
+    lNameController.clear();
   }
-  List<String>cites=[];
+
+  List<CountryModel> countries;
+  List<dynamic> cities = [];
   CountryModel selectedCountry;
-  String selectedCity;
-  selectCountry(CountryModel countryModel){
-    this.selectedCountry=countryModel;
-    this.cites=countryModel.cities;
+  dynamic selectedCity;
+
+  /// for selectedCountry
+  selectCountry(CountryModel countryModel) {
+    this.selectedCountry = countryModel;
+    this.cities = countryModel.cities;
+    selectCity(cities.first.toString());
     notifyListeners();
   }
-  List<CountryModel>countryies;
-  getCountryiesFromFireStore()async{
-    List<CountryModel> countryies= await FirestoreHelper.firestoreHelper.getCountriesFirestore();
-    this.countryies=countryies;
+
+  /// for selectedCity
+  selectCity(dynamic city) {
+    this.selectedCity = city;
+    notifyListeners();
+  }
+
+  /// for getting all Countries from fireStore
+  getCountriesFromFireStore() async {
+    List<CountryModel> countries =
+        await FirestoreHelper.firestoreHelper.getAllCountriesFromFireStore();
+    this.countries = countries;
+    selectCountry(countries.first);
+    notifyListeners();
+  }
+
+  /// upload images
+  File file;
+  selectedFile() async{
+    XFile imageFile =
+    await ImagePicker().pickImage(source: ImageSource.gallery);
+    this.file = File(imageFile.path);
     notifyListeners();
   }
 
   register() async {
-    await AuthHelper.authHelper
-        .signUp(emailEditingController.text, passwordEditingController.text);
-     await AuthHelper.authHelper.verifyEmail();
-    await  AuthHelper.authHelper.logOut();
-     await RoutHelper.routHelper.gotToPageWithReplacement(LoginPage.routeName);
+    UserCredential userCredential =  await AuthHelper.authHelper
+        .signup(emailEditingController.text, passwordEditingController.text);
+    String imageUrl =
+    await FirebaseStorageHelper.firebaseStorageHelper.uploadImage(file);
+      RegisterRequest registerRequest =   RegisterRequest(
+        id: userCredential.user.uid,
+        email: emailEditingController.text,
+        password: passwordEditingController.text,
+        fName: fNameController.text,
+        lName: lNameController.text,
+        city: selectedCity,
+        country: selectedCountry.name,
+        imageUrl: imageUrl,);
+    await FirestoreHelper.firestoreHelper.addUserToFireStore(registerRequest);
+    await AuthHelper.authHelper.verifyEmail();
+    await AuthHelper.authHelper.logOut();
+    await RoutHelper.routHelper.gotToPageWithReplacement(LoginPage.routeName);
     resetControllers();
   }
 
   login() async {
     UserCredential userCredential = await AuthHelper.authHelper
         .signIn(emailEditingController.text, passwordEditingController.text);
-    FirestoreHelper.firestoreHelper.addUserToFireStore(
-      RegisterRequest(
-        id: userCredential.user.uid,
-        email: emailEditingController.text,
-        password: passwordEditingController.text,
-        fName: fNameController.text,
-        lName: lNameController.text,
-        city: cityController.text,
-        country: countryController.text,
-      ),
-    );
+    FirestoreHelper.firestoreHelper
+        .getUserFromFirestore(userCredential.user.uid);
     bool isVerifiedEmail = AuthHelper.authHelper.checkEmailVerification();
     if (isVerifiedEmail) {
       RoutHelper.routHelper.gotToPageWithReplacement(HomePage.routeName);
@@ -79,16 +107,17 @@ class AuthProvider extends ChangeNotifier {
 
     resetControllers();
   }
-  sendVerification(){
+
+  sendVerification() {
     AuthHelper.authHelper.verifyEmail();
     AuthHelper.authHelper.logOut();
-
   }
 
   resetPassword() async {
     AuthHelper.authHelper.resetPassword(emailEditingController.text);
     resetControllers();
   }
+
   getCurrentUser() {
     User user = AuthHelper.authHelper.getCurrentUser();
     return user;
@@ -99,8 +128,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   getAllUsersFromFirestore() async {
-    allUsers =
-    await FirestoreHelper.firestoreHelper.getAllUsersFromFirestore();
+    allUsers = await FirestoreHelper.firestoreHelper.getAllUsersFromFirestore();
     notifyListeners();
   }
 }

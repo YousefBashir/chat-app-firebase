@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class RegisterRequest{
   String id;
   String email;
@@ -6,18 +8,27 @@ class RegisterRequest{
   String country;
   String fName;
   String lName;
+  String imageUrl;
 
-  RegisterRequest({this.id, this.email, this.password, this.city, this.country,
-      this.fName, this.lName});
-  toMap(){
-    return{
-     'id':this.id,
-     'email':this.email,
-     'password':this.password,
-     'city':this.city,
-     'country':this.country,
-    'fName':this.fName,
-     'lName':this.lName,
+  RegisterRequest({
+    @required this.id,
+    @required this.email,
+    @required this.password,
+    @required this.city,
+    @required this.country,
+    @required this.fName,
+    @required this.lName,
+    @required this.imageUrl,
+  });
+  toMap() {
+    return {
+      'id': this.id,
+      'email': this.email,
+      'city': this.city,
+      'country': this.country,
+      'fName': this.fName,
+      'lName': this.lName,
+      'imageUrl': this.imageUrl
     };
   }
 }

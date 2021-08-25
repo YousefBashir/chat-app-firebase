@@ -27,7 +27,7 @@ void main() {
           ChatPage.routeName:(context)=>ChatPage(),
         },
         navigatorKey: RoutHelper.routHelper.navKey,
-        home:ChatPage(),
+        home:FirebaseConfiguration(),
       )));
 }
 
@@ -49,13 +49,15 @@ class FirebaseConfiguration extends StatelessWidget {
             );
           }
           if (data.connectionState == ConnectionState.done) {
-            if (Provider.of<AuthProvider>(context,listen: false).getCurrentUser() != null) {
-              return HomePage();
-            }
-            else {
+            // if (Provider.of<AuthProvider>(context,listen: false).getCurrentUser() != null) {
+            //   return HomePage();
+            // }
+            //else {
               return RegisterPage();
-            }
+           // }
+
           }
+          else
           return Scaffold(
             body: Center(
               child: CircularProgressIndicator(),

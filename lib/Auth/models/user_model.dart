@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class UserModel{
   String id;
   String email;
@@ -6,8 +8,14 @@ class UserModel{
   String fName;
   String lName;
 
-  UserModel(
-  {this.id, this.email, this.city, this.country, this.fName, this.lName});
+  UserModel({
+    @required this.id,
+    @required this.email,
+    @required this.city,
+    @required this.country,
+    @required this.fName,
+    @required this.lName,
+  });
   UserModel.fromMap(Map map){
     this.id=map['id'];
     this.email=map['email'];

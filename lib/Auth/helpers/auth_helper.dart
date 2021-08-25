@@ -9,19 +9,21 @@ class AuthHelper {
   static AuthHelper authHelper = AuthHelper._();
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  signUp(String email, String password) async {
+  Future<UserCredential> signup(String email, String password) async {
     try {
       UserCredential userCredential = await firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
-
+      return userCredential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         CustomDialog.customDialog
-            .showCustomDialog('The password provided is to weak');
+            .showCustomDialog('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
         CustomDialog.customDialog
             .showCustomDialog('The account already exists for that email.');
       }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -29,9 +31,6 @@ class AuthHelper {
     try {
       UserCredential userCredential = await firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
-      FirestoreHelper.firestoreHelper
-          .getUserFromFirestore(userCredential.user.uid);
-
       return userCredential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -61,7 +60,7 @@ class AuthHelper {
   verifyEmail() async {
     await firebaseAuth.currentUser.sendEmailVerification();
     CustomDialog.customDialog
-        .showCustomDialog('Verification email has been sent!');
+        .showCustomDialog('Verification email has been sent!,please check your email');
   }
 
   logOut() async {

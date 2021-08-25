@@ -37,13 +37,7 @@ class RegisterPage extends StatelessWidget {
                 child: Column(
                   //crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 150,
-                      height: 200,
-                      child: Image.asset(
-                        'assets/images/logoo.jpg',
-                      ),
-                    ),
+
                     const SizedBox(
                       height: 10,
                     ),
@@ -59,6 +53,19 @@ class RegisterPage extends StatelessWidget {
                       style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
                     SizedBox(height: 10,),
+                    GestureDetector(
+                      onTap: () {
+                        provider.selectedFile();
+                      },
+                      child: Container(
+                        height: 200,
+                        width: 200,
+                        color: Colors.grey,
+                        child: provider.file == null
+                            ? Container()
+                            : Image.file(provider.file, fit: BoxFit.cover),
+                      ),
+                    ),
 
                   ],
                 ),
@@ -104,36 +111,48 @@ class RegisterPage extends StatelessWidget {
                               CustomTextField(
                                   provider.passwordEditingController,
                                   'Password',Icons.lock),
-                              CustomTextField(
-                                  provider.countryController,
-                                  'Country',Icons.home_outlined),
-                              CustomTextField(
-                                  provider.cityController,
-                                  'City',Icons.location_city),
-                              Container(child: DropdownButton<CountryModel>(
-                                value: provider.selectedCountry,
-                                onChanged: (x){
-                                 provider.selectCountry(x);
-                                },
-                                items: provider.countryies.map((e){
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      child: DropdownButton<CountryModel>(
+                                        //isExpanded: true,
+                                      value: provider.selectedCountry,
+                                      onChanged: (x){
+                                       provider.selectCountry(x);
+                                      },
+                                      items: provider.countries.map((e){
 
-                                  return DropdownMenuItem<CountryModel>(
-                                      child: Text(e.name),
-                                   );
-                                }).toList(),
-                              ),),
-                              Container(child: DropdownButton<dynamic>(
-                                value: provider.selectedCity,
-                                onChanged: (x){
-                                  provider.selectCountry(x);
-                                },
-                                items: provider.countryies.map((e){
+                                        return DropdownMenuItem<CountryModel>(
+                                            child: Text(e.name),
+                                          value: e,
+                                         );
+                                      }).toList(),
+                                    ),),
+                                  ),
+                                  SizedBox(width: 10,),
+                                  Expanded(
+                                    child: Container(
+                                      padding: EdgeInsets.all(15),
+                                      child: DropdownButton<dynamic>(
+                                      //isExpanded:true,
+                                      value: provider.selectedCity,
+                                      onChanged: (x){
+                                        provider.selectCity(x);
+                                      },
+                                      items: provider.cities.map((e){
 
-                                  return DropdownMenuItem<CountryModel>(
-                                    child: Text(e.name),
-                                    );
-                                }).toList(),
-                              ),)
+                                        return DropdownMenuItem<dynamic>(
+                                          child: Text(e),
+                                          value: e,
+                                        );
+                                      }).toList(),
+                                    ),),
+                                  )
+                                ],
+                              ),
+
 
                             ],
                           ),
