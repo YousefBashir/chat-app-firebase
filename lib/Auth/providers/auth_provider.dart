@@ -25,7 +25,12 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider() {
     getCountriesFromFireStore();
   }
-
+   UserModel user;
+  getUserFromFireStore()async{
+    String userId= AuthHelper.authHelper.getUserId();
+   user= await FirestoreHelper.firestoreHelper.getUserFromFirestore(userId);
+   notifyListeners();
+  }
   resetControllers() {
     emailEditingController.clear();
     passwordEditingController.clear();

@@ -7,6 +7,7 @@ class UserModel{
   String country;
   String fName;
   String lName;
+  String imageUrl;
 
   UserModel({
     @required this.id,
@@ -15,6 +16,7 @@ class UserModel{
     @required this.country,
     @required this.fName,
     @required this.lName,
+    @required this.imageUrl,
   });
   UserModel.fromMap(Map map){
     this.id=map['id'];
@@ -23,5 +25,7 @@ class UserModel{
     this.country=map['country'];
     this.fName=map['fName'];
     this.lName=map['lName'];
+    this.imageUrl=map['imageUrl'];
+
   }
 }
